@@ -1,2 +1,3 @@
 pytest>=4.4
+wheel
 git+https://github.com/ethereum/consensus-specs.git@adf20c5

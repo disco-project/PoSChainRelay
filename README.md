@@ -70,7 +70,7 @@ The file can be run by installing Python 3 (do consider creating a [virtual envi
 
 ```bash
 cd test/generate_data/ssz
-pip3 install -r requirements.txt
+cat requirements.txt | xargs -n 1 -L 1 pip3 install # installs dependencies one by one
 python3 generate_ssz_test_data.py
 ```
 

@@ -202,7 +202,7 @@ def hash_tree_root_pair(left: bytearray, right: bytearray) -> bytearray:
 
 # hash-tree-root of a list of 32-bytes
 # takes a list of 32-bytes-lists, returns a 32-byte-list
-def merkleize (chunks: list[bytearray]) -> bytearray:
+def merkleize (chunks: List[bytearray]) -> bytearray:
     # if chunks.__len__() == 2: 
     #   return hash_tree_root(chunks[0], chunks[1]) 
     length_next_pow = next_pow_of_two(chunks.__len__())
@@ -225,7 +225,7 @@ def hash_tree_root_blspubkey (blspubkey: bytearray) -> bytearray:
 
 # determine hash_tree_root for a Sync Committee (list of BLSPubkeys)
 # takes a list of 48-byte lists and returns a 32-byte list
-def hash_tree_root_sync_committee (sync_committee: list[bytearray], sync_aggregate: bytearray) -> bytearray:
+def hash_tree_root_sync_committee (sync_committee: List[bytearray], sync_aggregate: bytearray) -> bytearray:
     sync_committee_hashed = [hash_tree_root_blspubkey(blspubkey) for blspubkey in sync_committee]
     sync_committee_hashed_merkleized = merkleize(sync_committee_hashed) # theoretically there is a limit = N here, but that doesn't affect the function in this case
     # root = hash_tree_root_pair(sync_committee_hashed_merkleized, len(sync_committee).to_bytes(32, byteorder="little")) # mix in length
