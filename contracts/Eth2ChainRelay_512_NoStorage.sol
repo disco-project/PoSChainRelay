@@ -182,20 +182,20 @@ contract Eth2ChainRelay_512_NoStorage {
             _chainRelayUpdate.finalizedSlot >= finalizedSlot, 
             "finalized block older than last finalized block seen by chain relay");
         uint slot_distance = _chainRelayUpdate.latestSlot - latestSlotWithValidatorSetChange; 
-        if ((slot_distance / (SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD)) == 0) {
-            // the following check is executed but ignored in order to allow for testing with synthetic SSZ/Eth2 data
-            require(validateMerkleBranch(
-                finalizedStateRoot, 
-                hashTreeRootSyncCommittee(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.syncCommitteeAggregate), 
-                CURRENT_SYNC_COMMITTEE_INDEX, 
-                _chainRelayUpdate.syncCommitteeBranch), "merkle proof for current sync committee not valid");
-           require(
-               fastAggregateVerify(serializeAggregateSignature(
-                   signingRoot, 
-                   _chainRelayUpdate.signature, 
-                   getActiveValidators(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.participants, numberOfParticipants))), 
-               "signature by current sync committee not valid");
-        } else if ((slot_distance / (SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD)) == 1) {
+        // if ((slot_distance / (SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD)) == 0) {
+        //     // the following check is executed but ignored in order to allow for testing with synthetic SSZ/Eth2 data
+        //     require(validateMerkleBranch(
+        //         finalizedStateRoot, 
+        //         hashTreeRootSyncCommittee(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.syncCommitteeAggregate), 
+        //         CURRENT_SYNC_COMMITTEE_INDEX, 
+        //         _chainRelayUpdate.syncCommitteeBranch), "merkle proof for current sync committee not valid");
+        //    require(
+        //        fastAggregateVerify(serializeAggregateSignature(
+        //            signingRoot, 
+        //            _chainRelayUpdate.signature, 
+        //            getActiveValidators(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.participants, numberOfParticipants))), 
+        //        "signature by current sync committee not valid");
+        // } else if ((slot_distance / (SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD)) == 1) {
             // the following check is executed but ignored in order to allow for testing with synthetic SSZ/Eth2 data
             require(validateMerkleBranch(
                 finalizedStateRoot, 
@@ -210,9 +210,9 @@ contract Eth2ChainRelay_512_NoStorage {
                     getActiveValidators(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.participants, numberOfParticipants))), 
                 "signature by next sync committee not valid");
             latestSlotWithValidatorSetChange = _chainRelayUpdate.finalizedSlot;
-        } else {
-            revert("latest slot does not indicate that current or next sync committee is responsible");
-        }
+        // } else {
+        //     revert("latest slot does not indicate that current or next sync committee is responsible");
+        // }
         finalizedBlockRoot = _chainRelayUpdate.finalizedBlockRoot; 
         finalizedStateRoot = _chainRelayUpdate.finalizedStateRoot;
         latestSlot = _chainRelayUpdate.latestSlot;
