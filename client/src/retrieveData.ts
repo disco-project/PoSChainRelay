@@ -41,7 +41,8 @@ export const getBlockUpdateData = async (
     const latestBlockRoot = ssz.phase0.BeaconBlockHeader.hashTreeRoot(latestBlockHeader); // (await api.beacon.getBlockRoot(latestSlot)).data;
     const latestStateRoot = latestBlockHeader.stateRoot;
 
-    // const snapshot = (await api.lightclient.getSnapshot(toHexString(ssz.phase0.BeaconBlockHeader.hashTreeRoot(committeeUpdate.finalityHeader)))).data;
+    // const snapshot = (await api.lightclient.getSnapshot(toHexString(finalizedBlockRoot))).data;
+    // committeeUpdate.nextSyncCommittee
     // const { currentSyncCommittee } = snapshot;
     // console.log('snapshot slot: ', snapshot.header.slot);
     // const { currentSyncCommitteeBranch } = snapshot;
@@ -143,13 +144,14 @@ export const getBlockUpdateData = async (
     console.log(`latest slot: ${latestSlot}`);
     console.log(`finalized slot: ${finalizedSlot}`);
 
-    // const syncCommittee = snapshot.currentSyncCommittee.pubkeys; // currently hard coded, may be next committee as well
+    // const syncCommittee = currentSyncCommittee.pubkeys; // currently hard coded, may be next committee as well
     // const syncCommitteeBranch = currentSyncCommitteeBranch;
-    // const syncCommitteeAggregate = snapshot.currentSyncCommittee.aggregatePubkey;
+    // const syncCommitteeAggregate = currentSyncCommittee.aggregatePubkey;
 
-    const syncCommittee = committeeUpdate.nextSyncCommittee.pubkeys; // currently hard coded, may be current committee as well
-    const syncCommitteeBranch = committeeUpdate.nextSyncCommitteeBranch;
-    const syncCommitteeAggregate = committeeUpdate.nextSyncCommittee.aggregatePubkey;
+    const syncCommittee = nextSyncCommittee.pubkeys; // currently hard coded, may be current committee as well
+    const syncCommitteeBranch = nextSyncCommitteeBranch;
+    const syncCommitteeAggregate = nextSyncCommittee.aggregatePubkey;
+
     return {
         signature: toHexString(committeeUpdate.syncCommitteeSignature),
         participants: Array.from(committeeUpdate.syncCommitteeBits),

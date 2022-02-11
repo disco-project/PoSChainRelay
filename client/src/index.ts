@@ -60,7 +60,7 @@ const deployContractAtPeriod = async (
         updateData.finalizedStateRoot,
         updateData.finalizedSlot,
         updateData.latestSlot,
-        updateData.latestSlot, // ???
+        updateData.latestSlot-10000, // ???
         _targetUrl,
     ));
 };
@@ -90,26 +90,38 @@ const targetUrl = 'http://localhost:8555';
 const sourceUrl = 'http://localhost:9596';
 const web3 = new Web3(targetUrl);
 let account: string;
-web3.eth.getAccounts().then((accounts) => {
-    [account] = accounts;
+let address: string;
+let syncCommitteeEpoch = 10;
+web3.eth.getAccounts().then((_accounts) => {
+    [account] = _accounts;
     console.log('account: ', account);
     return deployContractAtPeriod(
         account,
-        2,
+        syncCommitteeEpoch++,
         170,
         0,
         sourceUrl,
         targetUrl,
     );
-}).then((address) => {
+}).then((_address) => {
+    address = _address;
     console.log('relay contract address: ', address);
     return updateContract(
         address,
-        3,
+        syncCommitteeEpoch++,
         account,
         sourceUrl,
         targetUrl,
     );
-}).then((transactionHash) => {
-    console.log('txHash: ', transactionHash);
+}).then((_transactionHash) => {
+    console.log('txHash: ', _transactionHash);
+    return updateContract(
+        address,
+        syncCommitteeEpoch++,
+        account,
+        sourceUrl,
+        targetUrl,
+    );
+}).then((_transactionHash) => {
+    console.log('txHash: ', _transactionHash);
 });
