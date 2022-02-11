@@ -187,7 +187,7 @@ contract Eth2ChainRelay_512_NoStorage {
             require(validateMerkleBranch(
                 finalizedStateRoot, 
                 hashTreeRootSyncCommittee(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.syncCommitteeAggregate), 
-                NEXT_SYNC_COMMITTEE_INDEX, 
+                CURRENT_SYNC_COMMITTEE_INDEX, 
                 _chainRelayUpdate.syncCommitteeBranch), "merkle proof for current sync committee not valid");
            require(
                fastAggregateVerify(serializeAggregateSignature(

@@ -76,7 +76,6 @@ const updateContract = async (
     const relayContract = new web3.eth.Contract(abi as AbiItem[], _relayContractAddress);
 
     const updateData = await getBlockUpdateData(_syncCommitteePeriod, _sourceUrl);
-
     return new Promise<string>((resolve, reject) => {
         relayContract.methods.submitUpdate(updateData).send({ from: _account }).then((receipt: TransactionReceipt) => {
             resolve(receipt.transactionHash);
@@ -91,13 +90,13 @@ const sourceUrl = 'http://localhost:9596';
 const web3 = new Web3(targetUrl);
 let account: string;
 let address: string;
-let syncCommitteeEpoch = 10;
+let syncCommitteePeriod = 10;
 web3.eth.getAccounts().then((_accounts) => {
     [account] = _accounts;
     console.log('account: ', account);
     return deployContractAtPeriod(
         account,
-        syncCommitteeEpoch++,
+        syncCommitteePeriod++,
         170,
         0,
         sourceUrl,
@@ -108,7 +107,7 @@ web3.eth.getAccounts().then((_accounts) => {
     console.log('relay contract address: ', address);
     return updateContract(
         address,
-        syncCommitteeEpoch++,
+        syncCommitteePeriod++,
         account,
         sourceUrl,
         targetUrl,
@@ -117,7 +116,7 @@ web3.eth.getAccounts().then((_accounts) => {
     console.log('txHash: ', _transactionHash);
     return updateContract(
         address,
-        syncCommitteeEpoch++,
+        syncCommitteePeriod++,
         account,
         sourceUrl,
         targetUrl,

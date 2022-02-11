@@ -148,10 +148,14 @@ export const getBlockUpdateData = async (
     // const syncCommitteeBranch = currentSyncCommitteeBranch;
     // const syncCommitteeAggregate = currentSyncCommittee.aggregatePubkey;
 
-    const syncCommittee = nextSyncCommittee.pubkeys; // currently hard coded, may be current committee as well
-    const syncCommitteeBranch = nextSyncCommitteeBranch;
-    const syncCommitteeAggregate = nextSyncCommittee.aggregatePubkey;
+    // const syncCommittee = nextSyncCommittee.pubkeys; // currently hard coded, may be current committee as well
+    // const syncCommitteeBranch = nextSyncCommitteeBranch;
+    // const syncCommitteeAggregate = nextSyncCommittee.aggregatePubkey;
 
+    const prevCommitteeUpdate = (await api.lightclient.getCommitteeUpdates(_syncCommitteePeriod-1, _syncCommitteePeriod-1)).data[0];
+    const syncCommittee = prevCommitteeUpdate.nextSyncCommittee.pubkeys; // currently hard coded, may be current committee as well
+    const syncCommitteeBranch = prevCommitteeUpdate.nextSyncCommitteeBranch;
+    const syncCommitteeAggregate = prevCommitteeUpdate.nextSyncCommittee.aggregatePubkey;
     return {
         signature: toHexString(committeeUpdate.syncCommitteeSignature),
         participants: Array.from(committeeUpdate.syncCommitteeBits),
