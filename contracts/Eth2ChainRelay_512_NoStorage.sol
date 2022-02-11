@@ -150,24 +150,24 @@ contract Eth2ChainRelay_512_NoStorage {
                 _chainRelayUpdate.stateRootBranch), 
             "merkle proof for latest state root not valid");
         // the following checks are executed but ignored in order to allow for testing with synthetic SSZ/Eth2 data
-        /*require(*/
+        require(
             validateMerkleBranch(
                 _chainRelayUpdate.latestBlockRoot, 
                 merklelizeSlot(_chainRelayUpdate.latestSlot), 
                 SLOT_INDEX, 
-                _chainRelayUpdate.latestSlotBranch)/*, "merkle proof for latest slot not valid")*/;
-        /*require(*/
+                _chainRelayUpdate.latestSlotBranch), "merkle proof for latest slot not valid");
+        require(
             validateMerkleBranch(
                 _chainRelayUpdate.stateRoot, 
                 _chainRelayUpdate.finalizedBlockRoot, 
                 FINALIZED_ROOT_INDEX, 
-                _chainRelayUpdate.finalizingBranch)/*, "merkle proof for finalized block root not valid")*/;
-        /*require(*/
+                _chainRelayUpdate.finalizingBranch), "merkle proof for finalized block root not valid");
+        require(
             validateMerkleBranch(
                 _chainRelayUpdate.finalizedBlockRoot, 
                 merklelizeSlot(_chainRelayUpdate.finalizedSlot), 
                 SLOT_INDEX, 
-                _chainRelayUpdate.finalizedSlotBranch)/*, "merkle proof for finalized slot not valid")*/;
+                _chainRelayUpdate.finalizedSlotBranch), "merkle proof for finalized slot not valid");
         require(
             validateMerkleBranch(
                 _chainRelayUpdate.finalizedBlockRoot, 
@@ -184,11 +184,11 @@ contract Eth2ChainRelay_512_NoStorage {
         uint slot_distance = _chainRelayUpdate.latestSlot - latestSlotWithValidatorSetChange; 
         if ((slot_distance / (SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD)) == 0) {
             // the following check is executed but ignored in order to allow for testing with synthetic SSZ/Eth2 data
-            /*require(*/validateMerkleBranch(
+            require(validateMerkleBranch(
                 finalizedStateRoot, 
                 hashTreeRootSyncCommittee(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.syncCommitteeAggregate), 
-                CURRENT_SYNC_COMMITTEE_INDEX, 
-                _chainRelayUpdate.syncCommitteeBranch)/*, "merkle proof for current sync committee not valid")*/;
+                NEXT_SYNC_COMMITTEE_INDEX, 
+                _chainRelayUpdate.syncCommitteeBranch), "merkle proof for current sync committee not valid");
            require(
                fastAggregateVerify(serializeAggregateSignature(
                    signingRoot, 
@@ -197,12 +197,12 @@ contract Eth2ChainRelay_512_NoStorage {
                "signature by current sync committee not valid");
         } else if ((slot_distance / (SLOTS_PER_EPOCH * EPOCHS_PER_SYNC_COMMITTEE_PERIOD)) == 1) {
             // the following check is executed but ignored in order to allow for testing with synthetic SSZ/Eth2 data
-            /*require(*/validateMerkleBranch(
+            require(validateMerkleBranch(
                 finalizedStateRoot, 
                 hashTreeRootSyncCommittee(_chainRelayUpdate.syncCommittee, _chainRelayUpdate.syncCommitteeAggregate), 
                 NEXT_SYNC_COMMITTEE_INDEX, 
                 _chainRelayUpdate.syncCommitteeBranch)
-                /*, "merkle proof for next sync committee not valid")*/;
+                , "merkle proof for next sync committee not valid");
             require(
                 fastAggregateVerify(serializeAggregateSignature(
                     signingRoot, 
