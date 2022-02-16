@@ -8,6 +8,7 @@ import { isValidMerkleBranch } from '@chainsafe/lodestar-light-client/lib/utils/
 import { computeSyncPeriodAtEpoch } from '@chainsafe/lodestar-light-client/lib/utils/clock';
 
 import { ChainRelayUpdate } from './types';
+import { logger } from './utils/logger';
 
 const FINALIZED_ROOT_INDEX = 105;
 // const CURRENT_SYNC_COMMITTEE_INDEX = 54;
@@ -32,8 +33,8 @@ export const getBlockUpdateData = async (
     const finalizedSlot = finalizedBlockHeader.slot;
     const finalizedStateRoot = finalizedBlockHeader.stateRoot;
     const finalizedBlockRoot = (await api.beacon.getBlockRoot(finalizedSlot)).data;
-    console.log('finalized slot slot: ', committeeUpdate.header.slot);
-    console.log('finalizing slot: ', committeeUpdate.finalityHeader.slot);
+    logger.info('finalized slot slot: ', committeeUpdate.header.slot);
+    logger.info('finalizing slot: ', committeeUpdate.finalityHeader.slot);
 
     // const signedlatestBlockHeader = (await api.beacon.getBlockHeader(_slot ? _slot : "head")).data.header
     const latestBlockHeader = committeeUpdate.finalityHeader;
@@ -44,16 +45,16 @@ export const getBlockUpdateData = async (
     // const snapshot = (await api.lightclient.getSnapshot(toHexString(finalizedBlockRoot))).data;
     // committeeUpdate.nextSyncCommittee
     // const { currentSyncCommittee } = snapshot;
-    // console.log('snapshot slot: ', snapshot.header.slot);
+    // logger.info('snapshot slot: ', snapshot.header.slot);
     // const { currentSyncCommitteeBranch } = snapshot;
     const { nextSyncCommitteeBranch } = committeeUpdate;
     const { nextSyncCommittee } = committeeUpdate;
 
-    console.log('latest block root: ', toHexString(latestBlockRoot));
+    logger.info('latest block root: ', toHexString(latestBlockRoot));
     const stateRootBranch = ssz.phase0.BeaconBlockHeader.createTreeBackedFromStruct(latestBlockHeader).tree.getSingleProof(BigInt(11));
-    // console.log('stateRootBranch: ', stateRootBranch.map(toHexString));
+    // logger.info('stateRootBranch: ', stateRootBranch.map(toHexString));
 
-    console.log(
+    logger.info(
         'stateRootBranch valid: ',
         isValidMerkleBranch(
             latestStateRoot.valueOf() as Uint8Array,
@@ -64,9 +65,9 @@ export const getBlockUpdateData = async (
     );
 
     const latestSlotBranch = ssz.phase0.BeaconBlockHeader.createTreeBackedFromStruct(latestBlockHeader).tree.getSingleProof(BigInt(8));
-    // console.log('latestSlotBranch: ', latestSlotBranch.map(toHexString));
+    // logger.info('latestSlotBranch: ', latestSlotBranch.map(toHexString));
 
-    console.log(
+    logger.info(
         'latestSlotBranch valid: ',
         isValidMerkleBranch(
             ssz.Slot.hashTreeRoot(latestSlot),
@@ -77,9 +78,9 @@ export const getBlockUpdateData = async (
     );
 
     const finalizedStateRootBranch = ssz.phase0.BeaconBlockHeader.createTreeBackedFromStruct(finalizedBlockHeader).tree.getSingleProof(BigInt(11));
-    // console.log('finalizedStateRootBranch: ', finalizedStateRootBranch.map(toHexString));
+    // logger.info('finalizedStateRootBranch: ', finalizedStateRootBranch.map(toHexString));
 
-    console.log(
+    logger.info(
         'finalizedStateRootBranch valid: ',
         isValidMerkleBranch(
             finalizedStateRoot.valueOf() as Uint8Array,
@@ -90,9 +91,9 @@ export const getBlockUpdateData = async (
     );
 
     const finalizedSlotBranch = ssz.phase0.BeaconBlockHeader.createTreeBackedFromStruct(finalizedBlockHeader).tree.getSingleProof(BigInt(8));
-    // console.log('finalizedSlotBranch: ', finalizedSlotBranch.map(toHexString));
+    // logger.info('finalizedSlotBranch: ', finalizedSlotBranch.map(toHexString));
 
-    console.log(
+    logger.info(
         'finalizedSlotBranch valid: ',
         isValidMerkleBranch(
             ssz.Slot.hashTreeRoot(finalizedSlot),
@@ -102,7 +103,7 @@ export const getBlockUpdateData = async (
         ),
     );
 
-    console.log(
+    logger.info(
         'nextSyncCommitteeBranch valid: ',
         isValidMerkleBranch(
             ssz.altair.SyncCommittee.hashTreeRoot(nextSyncCommittee),
@@ -112,7 +113,7 @@ export const getBlockUpdateData = async (
         ),
     );
 
-    // console.log(
+    // logger.info(
     //     'currentSyncCommitteeBranch valid: ',
     //     isValidMerkleBranch(
     //         ssz.altair.SyncCommittee.hashTreeRoot(currentSyncCommittee),
@@ -122,7 +123,7 @@ export const getBlockUpdateData = async (
     //     ),
     // );
 
-    console.log(
+    logger.info(
         'finalizingBranch valid: ',
         isValidMerkleBranch(
             finalizedBlockRoot.valueOf() as Uint8Array,
@@ -132,17 +133,17 @@ export const getBlockUpdateData = async (
         ),
     );
 
-    console.log('state root: ', toHexString(latestStateRoot));
-    console.log('body root: ', toHexString(latestBlockHeader.bodyRoot));
+    logger.info('state root: ', toHexString(latestStateRoot));
+    logger.info('body root: ', toHexString(latestBlockHeader.bodyRoot));
 
-    console.log('finalized block state root: ', toHexString(finalizedStateRoot));
+    logger.info('finalized block state root: ', toHexString(finalizedStateRoot));
 
     const { genesisValidatorsRoot } = (await api.beacon.getGenesis()).data;
     const beaconConfig: IBeaconConfig = createIBeaconConfig(config, genesisValidatorsRoot);
     const domain = beaconConfig.getDomain(DOMAIN_SYNC_COMMITTEE, latestSlot);
 
-    console.log(`latest slot: ${latestSlot}`);
-    console.log(`finalized slot: ${finalizedSlot}`);
+    logger.info(`latest slot: ${latestSlot}`);
+    logger.info(`finalized slot: ${finalizedSlot}`);
 
     // const syncCommittee = currentSyncCommittee.pubkeys; // currently hard coded, may be next committee as well
     // const syncCommitteeBranch = currentSyncCommitteeBranch;
@@ -152,7 +153,7 @@ export const getBlockUpdateData = async (
     // const syncCommitteeBranch = nextSyncCommitteeBranch;
     // const syncCommitteeAggregate = nextSyncCommittee.aggregatePubkey;
 
-    const prevCommitteeUpdate = (await api.lightclient.getCommitteeUpdates(_syncCommitteePeriod-1, _syncCommitteePeriod-1)).data[0];
+    const prevCommitteeUpdate = (await api.lightclient.getCommitteeUpdates(_syncCommitteePeriod - 1, _syncCommitteePeriod - 1)).data[0];
     const syncCommittee = prevCommitteeUpdate.nextSyncCommittee.pubkeys; // currently hard coded, may be current committee as well
     const syncCommitteeBranch = prevCommitteeUpdate.nextSyncCommitteeBranch;
     const syncCommitteeAggregate = prevCommitteeUpdate.nextSyncCommittee.aggregatePubkey;

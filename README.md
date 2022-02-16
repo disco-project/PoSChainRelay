@@ -77,3 +77,15 @@ python3 generate_ssz_test_data.py
 For navigating SSZ data structures and generating additional test data, it is also helpful to load the file in an interactive Python shell by running `python3 -i generate_ssz_test_data.py`. 
 
 Note that the file also contains the class `ChainRelayAlpha`, which is an early version of the prototype chain relay written in Python. It was used testing first versions of the application logic and defining helper functions derived from the specification. While it is not up to date with the Solidity version of the chain relay prototype, it may still be used to check generated SSZ test data. 
+
+## Client
+
+The client retrieves sync committee updates from a consensus layer node, deploys the relay contract to the modified Ethereum node and applies updates to the contract. Currently, only the [lodestar](https://github.com/ChainSafe/lodestar) client supports the required lightclient API. Furthermore, the current client implementation only supports updating between sync committee periods. Intermediate blocks are soon to follow.
+
+The client is implemented in typscript and tests are run via the following commands:
+```bash
+cd client
+npm install
+npx tsc
+npm test
+```
